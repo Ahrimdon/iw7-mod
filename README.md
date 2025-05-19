@@ -7,22 +7,25 @@
   <img src="assets/gitea/banner-iw7.png?raw=true" />
 </p>
 
-> [!IMPORTANT]
-> - ### You do ***<u>NOT</u>*** need to own *Call of Duty®: Infinite Warfare* to run this mod. Cracked or pirated versions of the game ***<u>ARE</u>*** supported (see [below](#pirated-versions))
-> - ### Steam Verification has been removed.
-> - ### Dedicated servers are now working with the latest build!
+- ### You do **NOT** need to own Call of Duty®: Infinite Warfare to run this mod. Cracked or pirated versions of the game **ARE** supported!
+- ### Steam Verification has been removed.
+- ### Dedicated servers are now working with the latest build!
+
+  > [!IMPORTANT]
+  > Pirated copies require extra steps (see [below](#pirated-versions))
 
 ## Table of Contents
+
 - [Client Download](#downloads)
 - [Requirements](#requirements)
-- [Install Instructions](#install-instructions)
-  - [Command Line](#cmd-line) (*Easiest for Advanced Users*)
+- [Install Instructions](#instructions)
+  <!-- - [Command Line](#cmd-line) (*Easiest for Advanced Users*) -->
   - [Installer](#installer) (*Easiest for Beginner Users*)
   - [Zip Archive](#zip-archive)
 - [Cloning the repository](#cloning-the-repository)
   - [Using Git](#using-git)
-  - [Download as ZIP](#download-as-zip)
   - [Installing Git (Optional)](#installing-git-optional)
+  <!-- - [Download as ZIP](#download-as-zip) -->
 - [Where can I get the game?](#where-can-i-get-the-game)
   - [Downloading qBittorrent](#downloading-qbittorrent)
 - [What if I have a pirated version of *Call of Duty®: Infinite Warfare*](#pirated-versions)
@@ -41,17 +44,18 @@
 - [Disclaimer and Limitation of Liability](#disclaimer)
 
 ## Client Download<a id="downloads"></a>
+
 [Click here for all client related downloads](https://git.rimmyscorner.com/Rim/iw7-mod/releases/tag/latest#downloads)
 
 ## Requirements<a id="requirements"></a>
 
 - Call of Duty Infinite Warfare game files (see below for cracked versions)
-- Windows 10/11 Operating System (if using Wine on Linux you shouldn't need this guide)
+- Windows 10/11 Operating System (those using Wine most likely don't need this guide)
 - Steam installed
 
 ## Install Instructions<a id="instructions"></a>
 
-<a id="cmd-line"></a>
+<!-- <a id="cmd-line"></a>
 ### <u>Command Line</u>
   1. `cd 'iw_game_directory'`<br>
 
@@ -71,20 +75,23 @@
 
   ```
   curl -sSL https://git.rimmyscorner.com/Rim/iw7-mod/releases/download/latest/iw7Installer.exe -o iw7Installer.exe && chmod +x iw7Installer.exe && ./iw7Installer.exe -s
-  ```
+  ``` -->
 
 <a id="installer"></a>
+
 ### <u>Installer</u>
+
 1. Download or compile [`iw7Installer.exe`](https://git.rimmyscorner.com/Rim/iw7-mod/releases/download/latest/iw7Installer.exe)
 1. Place in Call of Duty Infinite Warfare game directory and run
 
 (*The installer is fully [Open Source](https://git.rimmyscorner.com/Rim/iw7-mod/src/branch/main/installer/iw7_Installer.nsi) and created using NSIS*)
 
-  > [!NOTE]
+  > [!TIP]
   > * Run installer as Administrator if your game installation is in a protected folder (e.g. `C:\Program Files`)
   > * You **DO NOT** need to disable your anti-virus to run the installer
 
   > [!NOTE]
+  The Installer:
   > - Installs the IW7-Mod Client
   > - Places the required client files and scripts
   > - Places the server configuration files in
@@ -92,35 +99,44 @@
   > - Creates uninstaller to remove all files
 
   > [!WARNING]
-  > Running the uninstaller will remove **ALL** files, including savegames, player stats, loadouts, etc. If you wish to uninstall and play in the future, make a backup of the `iw7-mod/*` folder located in your game directory
+  The Uninstaller:
+  >
+  > Removes **ALL** files, including savegames, player stats, loadouts, etc. If you wish to uninstall and play in the future, make a backup of the `iw7-mod/*` folder located in your game directory
 
 <a id="zip-archive"></a>
+
 ### <u>Zip Archive</u>
+
 1. Download `iw7-mod.zip`
 2. Extract the contents of `iw7-mod.zip` into your Call of Duty Infinite Warfare game directory
     > **Note:** The default Steam installation path is usually `C:\Program Files (x86)\Steam\steamapps\common\Call of Duty - Infinite Warfare`
-3. Launch the game using either `iw7-mod.exe` or `!launch_iw7_mod.bat`
+3. Launch the game using either `iw7-mod.exe` or `!start_client.bat`
 
 ## Cloning the repository<a id="cloning-the-repository"></a>
 
 <a id="using-git"></a>
+
 ### <u>Using Git</u>
+
 1. Ensure you have Git installed on your computer and added to your PATH environment variable
 2. Open a terminal or command prompt
 3. Run the following command:
-    ```
+
+    ```bash
     git clone http://git.rimmyscorner.com/Rim/iw7-mod.git
     ```
 
-<a id="download-as-zip"></a>
+<!-- <a id="download-as-zip"></a>
+
 ### <u>Download as ZIP</u>
+
 1. Click on the three dots at the top of the repo ( `◘◘◘` )
 2. Click `Download ZIP`
-3. Extract the zip archive
+3. Extract the zip archive -->
 
 ### Installing Git (Optional)<a id="installing-git"></a>
 
-If you don't have `git` installed on your machine, follow these steps:
+If you don't have git installed on your machine, follow these steps:
 
 1. Visit the [Git download page](https://git-scm.com/downloads).
 2. Download the appropriate version for your operating system.
@@ -129,33 +145,39 @@ If you don't have `git` installed on your machine, follow these steps:
 4. After installation, open a terminal or command prompt and type `git --version` to ensure Git is correctly installed.
 
 ## Where can I get the game?<a id="where-can-i-get-the-game"></a>
+
 1. You can get the game on [Steam](https://store.steampowered.com/agecheck/app/292730/) (preferred)
 2. If you can't afford the game. Oh well, you tried. You can get the game for free by [torrent](https://git.rimmyscorner.com/Rim/cod-games-download/releases/download/latest/iw7_full_game.zip) or [magnet](magnet:?xt=urn:btih:LVMN5UHPVZZ65KPW4FB32TQBMWHRQXQQ&dn=Call%20of%20Duty%20Infinite%20Warfare-Rui.7z&xl=102090401846&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce)
 
-    > [!TIP]
-    Use a a free, open source and ad-free torrenting software such as [qBittorrent](https://www.qbittorrent.org/download) and a VPN to avoid copyright letters from your ISP (i.e. https://iknowwhatyoudownload.com)
+### Downloading qBittorrent
 
-### Downloading qBittorrent<a id="downloading-qbittorrent"></a>
+> [!WARNING]
+> Use a VPN to avoid copyright letters from your ISP (i.e. https://iknowwhatyoudownload.com)
 
-1. Visit the [qBittorrent Download Page](https://www.qbittorrent.org/download).
-2. Open `.torrent` or `.magnet` files in qBittorrent
-3. Set your game(s) folder as your download directory (***e.g.*** `C:\Program Files (x86)\Steam\steamapps\common\Call of Duty...` or `D:\Games\Call of Duty...`)
-4. On the "content layout" drop-down menu, select "Don't create subfolder"
-5. Start the download and wait until it says "100% - Seeding"
+1. Visit the [qBittorrent Download Page](https://www.qbittorrent.org/download) and install the latest version of qBittorrent
+2. Open `.torrent` files in qBittorrent
+3. Set your game(s) folder as your download directory (**_e.g._** `C:\Program Files (x86)\Steam\steamapps\common\Call of Duty...` or `D:\Games\Call of Duty...`)
+4. **Important:** On the "Content layout" drop-down menu, select "Don't create subfolder"
+5. Start the download and wait till it says "100% - Seeding"
 6. You can now remove the torrent from qBittorrent (right click -> remove) or keep seeding to help others download faster
-    > [!CAUTION]
-    Make sure "Also Permanently Delete the Files" is **UNCHECKED**!
-7. Once files are downloaded, move on to installing the clients
+   - Make sure "Also Permanently Delete the Files" is **UNCHECKED**!
+7. Once the game files are downloaded, move on to installing the client
 
-### What if I have a pirated version of *Call of Duty®: Infinite Warfare*<a id="pirated-versions"></a>
+> [!TIP]
+> Use a free, open source and ad-free torrenting software such as [qBittorrent](https://www.qbittorrent.org/download)
+
+### What if I have a pirated version of Call of Duty®: Infinite Warfare?<a id="pirated-versions"></a>
+
 If you torrent the .7z archive, it is missing some of the latest game files. In order to update your game, download and extract the [`patch.7z`](https://git.rimmyscorner.com/Rim/iw7-mod/releases/download/latest/patch.7z) archive below into your `Call of Duty Infinite Warfare/` game directory and overwrite any files it prompts.
 
 ### Common Issues & Solutions<a id="common-issues"></a>
+
 * *If you encounter issues extracting the 7z archive (e.g., 'The parameter is incorrect'), open the file in 7-Zip GUI, navigate to the `Call of Duty Infinite Warfare` folder in the archive, select all files, click `Extract`, and specify your game folder path. This will directly extract the game files to the location.*
 
 # Hosting a Dedicated Server<a id="dedicated-server"></a>
 
 ### Requirements<a id="#requirements-1"></a>
+
 * The [Visual C++ 2010 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=5555) and the [Visual C++ 2015-2019 Redistributable Package](https://aka.ms/vs/16/release/vc_redist.x86.exe).
 * [Visual Code](https://code.visualstudio.com/), [Notepad++](https://notepad-plus-plus.org/) or [Sublime Text](https://www.sublimetext.com/) (You may use whatever editor you choose but we don't recommend Windows Notepad).
 * A computer or VPS that is online 24/7 with a decent connection and above-average specs (VPS is strongly advised).
@@ -163,6 +185,7 @@ If you torrent the .7z archive, it is missing some of the latest game files. In 
 * An original copy of the game.
 
 ### Server Setup<a id="server-setup"></a>
+
 1. Download the `IW7DedicatedConfigs.zip` and extract into `Call of Duty Infinite Warfare/` game directory.
 2. Edit your `!start_mp_server.bat`, changing the ***CFG***, ***PORT***, ***WINDOW TITLE (NAME)***, and ***MOD*** (leave blank for now).
 3. Edit the `main/server_mp.cfg` to your liking (i.e. changing the ***map rotation*** and ***hostname***)
@@ -173,7 +196,7 @@ If you torrent the .7z archive, it is missing some of the latest game files. In 
 ### Connecting<a id="connecting"></a>
 1. You can either connect using the built-in *Server Browser* or by executing the in-game command `/connect ip:port`. This can either be your Local or WAN IPv4 address
    - Obtain your Local IPv4 address by pressing `Win + R`, typing `cmd`, entering `ipconfig` and pressing `Enter`
-   - Obtain your WAN IPv4 address by visiting a site like [WhatIsMyIP](https://www.whatismyip.com/) or [IPChicken](https://ipchicken.com/). If you have `curl` installed, you run the command `curl ifconfig.me`
+   - Obtain your WAN IPv4 address by visiting a site like [WhatIsMyIP](https://www.whatismyip.com/) or [IPChicken](https://ipchicken.com/). If you have curl installed, you run the command `curl ifconfig.me`
 > Local Example: Connecting locally would look like `/connect 192.168.0.202:27017`\
 > WAN Example: Connecting over the internet would look like `/connect 192.145.117.83:27017` (*you must [forward ports](#forward-ports) on your router*)
 
