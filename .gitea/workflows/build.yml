@@ -148,11 +148,11 @@ jobs:
         # This is the jankiest shit I've ever done, but it works
       - name: Delete Tag
         run: |
-          curl -X "DELETE" "https://git.rimmyscorner.com/api/v1/repos/Rim/iw7-test/tags/latest" -H "authorization: token ${{ secrets.TOKEN }}"
+          curl -X "DELETE" "https://git.rimmyscorner.com/api/v1/repos/Rim/iw7-mod/tags/latest" -H "authorization: token ${{ secrets.TOKEN }}"
 
       - name: Delete Release
         run: |
-          curl -X "DELETE" "https://git.rimmyscorner.com/api/v1/repos/Rim/iw7-test/releases/tags/latest" -H "authorization: token ${{ secrets.TOKEN }}"
+          curl -X "DELETE" "https://git.rimmyscorner.com/api/v1/repos/Rim/iw7-mod/releases/tags/latest" -H "authorization: token ${{ secrets.TOKEN }}"
       
       - name: Create Release
         id: create_release
