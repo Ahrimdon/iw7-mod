@@ -190,22 +190,17 @@ namespace patches
 			return true;
 		}
 
-		char* db_read_raw_file_stub(const char* filename, char* buf, const int size)
+		utils::hook::detour db_read_raw_file_hook;
+		const char* db_read_raw_file_stub(const char* filename, char* buf, const int size)
 		{
-			std::string file_name = filename;
-			if (file_name.find(".cfg") == std::string::npos)
-			{
-				file_name.append(".cfg");
-			}
-
 			std::string buffer{};
-			if (filesystem::read_file(file_name, &buffer))
+			if (filesystem::read_file(filename, &buffer))
 			{
 				snprintf(buf, size, "%s\n", buffer.data());
 				return buf;
 			}
 
-			return game::DB_ReadRawFile(filename, buf, size);
+			return db_read_raw_file_hook.invoke<const char*>(filename, buf, size);
 		}
 
 		void cbuf_execute_buffer_internal_stub(int local_client_num, int controller_index, char* buffer, [[maybe_unused]]void* callback)
@@ -223,6 +218,28 @@ namespace patches
 		void disconnect()
 		{
 			utils::hook::invoke<void>(0x140C58E20); // SV_MainMP_MatchEnd
+		}
+
+		void* update_last_seen_players_stub()
+		{
+			return utils::hook::assemble([](utils::hook::assembler& a)
+			{
+				const auto safe_continue = a.newLabel();
+
+				// (game's code)
+				a.mov(rax, ptr(rsi)); // g_entities pointer
+
+				// Avoid crash if pointer is nullptr
+				a.test(rax, rax);
+				a.jz(safe_continue);
+
+				// Jump back in (game's code)
+				a.mov(dword_ptr(rax, 0x4D10), 0);
+
+				// Continue to next iter in this loop
+				a.bind(safe_continue);
+				a.jmp(0x140B22287);
+			});
 		}
 	}
 
@@ -260,8 +277,9 @@ namespace patches
 			utils::hook::set<uint8_t>(0x140B0A9AC, 0xEB); // setclientdvar
 			utils::hook::set<uint8_t>(0x140B0ACC8, 0xEB); // setclientdvars
 
-			// Allow executing custom cfg files with the "exec" command
-			utils::hook::call(0x140B7CEF9, db_read_raw_file_stub);
+			// Allow loading of rawfiles from disk
+			db_read_raw_file_hook.create(game::DB_ReadRawFile, db_read_raw_file_stub);
+
 			// Add cheat override to exec
 			utils::hook::call(0x140B7CF11, cbuf_execute_buffer_internal_stub);
 
@@ -320,6 +338,10 @@ namespace patches
 
 			utils::hook::nop(0x140E6A2FB, 2); // don't wait for occlusion query to succeed (forever loop)
 			utils::hook::nop(0x140E6A30C, 2); // ^
+
+			// Patch crash caused by the server trying to kick players for 'invalid password'
+			utils::hook::nop(0x140B2215B, 18);
+			utils::hook::jump(0x140B2215B, update_last_seen_players_stub(), true);
 		}
 	};
 }

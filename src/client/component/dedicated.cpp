@@ -50,22 +50,31 @@ namespace dedicated
 			return startup_command_queue;
 		}
 
-		void execute_startup_commands()
+		void execute_buffer_stub(int /*client*/, int /*controllerIndex*/, const char* command)
 		{
-			auto& com_num_console_lines = *game::com_num_console_lines;
-			auto* com_console_lines = game::com_console_lines.get();
-
-			for (auto i = 0; i < com_num_console_lines; i++)
+			if (_ReturnAddress() != (void*)0x140B8D214)
 			{
-				auto cmd = com_console_lines[i];
+				return game::Cbuf_ExecuteBufferInternal(0, 0, command, game::Cmd_ExecuteSingleCommand);
+			}
 
-				// if command is map or map_rotate, its already been called
-				if (cmd == "map"s || cmd == "map_rotate"s)
-				{
-					continue;
-				}
+			if (game::Live_SyncOnlineDataFlags(0) == 0)
+			{
+				game::Cbuf_ExecuteBufferInternal(0, 0, command, game::Cmd_ExecuteSingleCommand);
+			}
+			else
+			{
+				get_startup_command_queue().emplace_back(command);
+			}
+		}
 
-				game::Cbuf_ExecuteBufferInternal(0, 0, cmd, game::Cmd_ExecuteSingleCommand);
+		void execute_startup_command_queue()
+		{
+			const auto queue = get_startup_command_queue();
+			get_startup_command_queue().clear();
+
+			for (const auto& command : queue)
+			{
+				game::Cbuf_ExecuteBufferInternal(0, 0, command.data(), game::Cmd_ExecuteSingleCommand);
 			}
 		}
 
@@ -105,25 +114,6 @@ namespace dedicated
 			}
 		}
 
-		void sys_error_stub(const char* msg, ...)
-		{
-			char buffer[2048]{};
-
-			va_list ap;
-			va_start(ap, msg);
-
-			vsnprintf_s(buffer, _TRUNCATE, msg, ap);
-
-			va_end(ap);
-
-			scheduler::once([]
-			{
-				command::execute("map_rotate");
-			}, scheduler::main, 3s);
-
-			game::Com_Error(game::ERR_DROP, "%s", buffer);
-		}
-
 		void init_dedicated_server()
 		{
 			// R_RegisterDvars
@@ -149,18 +139,19 @@ namespace dedicated
 			{
 				if (game::Com_GameMode_GetActiveGameMode() == game::GAME_MODE_CP)
 				{
-					command::execute("exec default_systemlink_cp.cfg", true);
 					command::execute("exec default_cp.cfg", true);
 				}
 				else if (game::Com_GameMode_GetActiveGameMode() == game::GAME_MODE_MP)
 				{
-					command::execute("exec default_systemlink_mp.cfg", true);
 					command::execute("exec default_mp.cfg", true);
 				}
 			};
 
 			initialize_gamemode();
 		}
+
+		utils::hook::detour snd_lookup_sound_length_hook;
+		utils::hook::detour start_server_hook;
 
 		nlohmann::json snd_alias_length_data;
 
@@ -199,18 +190,41 @@ namespace dedicated
 			}
 			else
 			{
-				//console::error("[SND]: failed to find sound length soundalias \"%s\"\n", alias);
+#ifdef DEBUG
+				console::error("[SND]: failed to find sound length soundalias \"%s\"\n", alias);
+#endif
 				return 0;
 			}
 		}
 
-		utils::hook::detour snd_lookup_sound_length_hook;
-		int snd_lookup_sound_length_stub(const char* alias)
+		void generate_snd_alias_length_data()
 		{
-			return get_snd_alias_length(alias);
+			snd_alias_length_data.clear();
+
+			game::DB_EnumXAssets(game::ASSET_TYPE_SOUND_BANK, [](const game::XAssetHeader& header)
+			{
+				auto* asset = header.soundBank;
+				for (unsigned int i = 0; i < asset->aliasCount; i++)
+				{
+					auto alias = &asset->alias[i];
+					const auto length = snd_lookup_sound_length_hook.invoke<int>(alias->aliasName);
+					if (!snd_alias_length_data.contains(alias->aliasName) && length > 0)
+					{
+						snd_alias_length_data[alias->aliasName] = length;
+					}
+				}
+			});
 		}
 
-		utils::hook::detour start_server_hook;
+		int snd_lookup_sound_length_stub(const char* alias)
+		{
+			if (game::environment::is_dedi())
+			{
+				return get_snd_alias_length(alias);
+			}
+			return snd_lookup_sound_length_hook.invoke<int>(alias);
+		}
+
 		void start_server_stub(game::SvServerInitSettings* init_settings)
 		{
 			snd_alias_length_data = get_snd_alias_length_data_for_map(init_settings->mapName);
@@ -225,15 +239,43 @@ namespace dedicated
 		{
 			if (!game::environment::is_dedi())
 			{
+#ifdef DEBUG
+				snd_lookup_sound_length_hook.create(0x140C9BCE0, snd_lookup_sound_length_stub);
+				command::add("generateSoundLookupData", []()
+				{
+					console::info("Generating sound lookup data...\n");
+					const auto mapname = game::Dvar_FindVar("mapname")->current.string;
+					if (mapname && *mapname && game::CL_IsGameClientActive(0))
+					{
+						generate_snd_alias_length_data();
+						if (snd_alias_length_data.is_object())
+						{
+							const auto path = "sounddata/"s + game::Com_GameMode_GetActiveGameModeStr() + "/"s + mapname + ".json"s;
+							utils::io::write_file(path, snd_alias_length_data.dump(4));
+							console::info("Sound lookup data written to %s\n", path.data());
+						}
+					}
+					else
+					{
+						console::error("Failed to generate sound lookup data: map is not loaded yet.\n");
+					}
+				});
+#endif
 				return;
 			}
-			
+
 #ifdef DEBUG
 			printf("Starting dedicated server\n");
 #endif
-			
+
 			// Register dedicated dvar
 			game::Dvar_RegisterBool("dedicated", true, game::DVAR_FLAG_READ, "Dedicated server");
+
+			// Add hostname
+			scheduler::once([]()
+			{
+				game::Dvar_RegisterString("sv_hostname", "IW7-Mod Default Server", game::DVAR_FLAG_REPLICATED, "Host name of the server");
+			}, scheduler::pipeline::main);
 
 			// Add lanonly mode
 			sv_lanOnly = game::Dvar_RegisterBool("sv_lanOnly", false, game::DVAR_FLAG_NONE, "Don't send heartbeat");
@@ -249,9 +291,6 @@ namespace dedicated
 			dvars::override::register_bool("r_loadForRenderer", false, game::DVAR_FLAG_READ);
 
 			dvars::override::register_bool("intro", false, game::DVAR_FLAG_READ);
-
-			// Stop crashing from sys_errors
-			//utils::hook::jump(0x140D34180, sys_error_stub, true);
 
 			// Is party dedicated
 			utils::hook::jump(0x1405DFC10, party_is_server_dedicated_stub);
@@ -385,7 +424,7 @@ namespace dedicated
 			// recipe save threads
 			utils::hook::set<uint8_t>(0x140E7C970, 0xC3);
 
-			// set game mode
+			// start game mode
 			scheduler::once([]()
 			{
 				if (utils::flags::has_flag("cpMode") || utils::flags::has_flag("zombies"))
@@ -410,14 +449,17 @@ namespace dedicated
 				// remove disconnect command
 				game::Cmd_RemoveCommand("disconnect");
 
-				execute_startup_commands();
+				execute_startup_command_queue();
 
 				// Send heartbeat to dpmaster
 				scheduler::once(send_heartbeat, scheduler::pipeline::server);
 				scheduler::loop(send_heartbeat, scheduler::pipeline::server, 10min);
 				command::add("heartbeat", send_heartbeat);
+			}, scheduler::pipeline::main, 100ms);
 
-			}, scheduler::pipeline::main, 1s);
+			utils::hook::jump(0x140B7C3B0, execute_buffer_stub);
+			utils::hook::set<uint8_t>(0x1405AC6A0, 0xC3); // Com_ExecLobbyDefaultConfigs
+			utils::hook::set<uint8_t>(0x140CCD840, 0xC3); // Playlist_RunRules
 
 			// dedicated info
 			scheduler::loop([]()
