@@ -4,7 +4,7 @@
 [![website](https://img.shields.io/badge/Repackers-_Website-red)](https://rimmyscorner.com/)
 
 <p align="center">
-  <img src="assets/gitea/banner-iw7.png?raw=true" />
+  <img src="assets/github/banner-iw7.png?raw=true" />
 </p>
 
 - ### You do **NOT** need to own Call of Duty®: Infinite Warfare to run this mod. Cracked or pirated versions of the game **ARE** supported!
