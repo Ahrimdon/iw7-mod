@@ -7,12 +7,6 @@
   <img src="assets/github/banner-iw7.png?raw=true" />
 </p>
 
-- ### You do **NOT** need to own Call of Duty®: Infinite Warfare to run this mod. Cracked or pirated versions of the game **ARE** supported!
-- ### Steam Verification has been removed.
-- ### Dedicated servers are now working with the latest build!
-
-  > [!IMPORTANT]
-  > Pirated copies require extra steps (see [below](#pirated-versions))
 
 ## Table of Contents
 
@@ -28,7 +22,6 @@
   <!-- - [Download as ZIP](#download-as-zip) -->
 - [Where can I get the game?](#where-can-i-get-the-game)
   - [Downloading qBittorrent](#downloading-qbittorrent)
-- [What if I have a pirated version of *Call of Duty®: Infinite Warfare*](#pirated-versions)
   - [Common Issues & Solutions](#common-issues)
 - [Hosting a Dedicated Server](#dedicated-server)
   - [Requirements](#requirements-1)
@@ -165,8 +158,6 @@ If you don't have git installed on your machine, follow these steps:
 
 > [!TIP]
 > Use a free, open source and ad-free torrenting software such as [qBittorrent](https://www.qbittorrent.org/download)
-
-### What if I have a pirated version of Call of Duty®: Infinite Warfare?<a id="pirated-versions"></a>
 
 If you torrent the .7z archive, it is missing some of the latest game files. In order to update your game, download and extract the [`patch.7z`](https://git.rimmyscorner.com/Rim/iw7-mod/releases/download/latest/patch.7z) archive below into your `Call of Duty Infinite Warfare/` game directory and overwrite any files it prompts.
 
